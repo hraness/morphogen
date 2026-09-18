@@ -71,6 +71,18 @@
   </section>
 
   <section>
+    <h2>A new primitive</h2>
+    <p>
+      Morphogen is not a prompt framework or a DAG engine. It is a
+      <em>bounded, typed, content-addressed probabilistic program</em>: a
+      manifest as a value, a run as a verifiable receipt, and model judgment
+      isolated behind declared cells. That makes an organism a new kind of
+      reusable object: hashable, transportable, evolvable, and safe to execute
+      even when you did not write it.
+    </p>
+  </section>
+
+  <section>
     <img alt="" aria-hidden="true" class="morphogen-topic-icon" decoding="async" height="88" loading="lazy" src="/icons/shape.svg" width="88">
     <h2>The shape</h2>
     <pre class="code">cells:
@@ -115,6 +127,64 @@ $ morphogen verify run.receipt.json triage.morphogen.json
       <li>Effects are pure, so they memoize: <code>run --cache-effects</code> serves an identical request digest from the store's recorded response — first record wins, errors never memoize, and the receipt marks the reuse <code>cached</code>.</li>
       <li>Receipts make runs replayable, not reproducible — the same organism on fresh inputs can legitimately diverge.</li>
     </ul>
+  </section>
+
+  <section>
+    <h2>Case study: cheap + tool beats frontier alone</h2>
+    <p>
+      A billing-dispute organism first retrieves an account's charge ledger
+      through a typed <code>tool</code> cell, then decides whether to
+      <code>refund</code>, <code>escalate</code>, or <code>monitor</code>.
+    </p>
+    <p>
+      Live Vercel AI Gateway result on six cases, priced from aicharts.io / AI//COST:
+    </p>
+    <ul>
+      <li><strong>Qwen 3.5 Flash + ledger tool:</strong> 6/6 correct for $0.00131</li>
+      <li><strong>Claude Opus 5 without the ledger:</strong> 4/6 correct for $0.02625</li>
+    </ul>
+    <p>
+      Both models fail the same evidence-only cases when they cannot look up
+      the ledger. The structure — a typed tool call feeding a bounded
+      classifier — is what wins, not the model brand.
+    </p>
+    <p>
+      <a href="https://github.com/hraness/morphogen/tree/main/examples/invest">See the invest example</a>
+      · <a href="https://github.com/hraness/morphogen/blob/main/docs/when-morphogen-wins.md">Read the intuition doc</a>
+    </p>
+  </section>
+
+  <section>
+    <h2>Use it as an agent tool</h2>
+    <p>
+      Pack an organism into a digest-verified bundle, generate an OpenAI or
+      Anthropic tool definition, and let a larger agent call it by running
+      <code>morphogen call</code>.
+    </p>
+    <pre class="code">$ morphogen pack ticket.morphogen.json --out ./tools
+$ morphogen tool-def ticket.morphogen.json
+$ morphogen call ./tools/&lt;bundle&gt;.bundle.json --args ticket.args.json
+{ "ok": true, "outputs": { "out": "billing" }, "receiptDigest": "sha256:..." }</pre>
+    <p>
+      The agent receives a compact result plus a receipt it can verify offline.
+    </p>
+  </section>
+
+  <section>
+    <h2>Habitats and self-evolution</h2>
+    <p>
+      Because a manifest is a value, an organism can generate and propose new
+      organisms, functions, and tools. A shared store and registries become a
+      habitat: a population that evolves through foundry search and host
+      admission. The organism cannot rewrite its own runtime; it can only
+      propose. The host remains the admission gate.
+    </p>
+    <p>
+      A live steel thread already works: <code>bun examples/habitat/promote.ts --live</code>
+      lets a parent organism call a model to design a child, spawn it, and the
+      host promotes the child to a standalone bundle if it is valid and different
+      from the safe fallback.
+    </p>
   </section>
 
   <section class="status">

@@ -42,7 +42,29 @@ export {
   replayExecutor,
   scriptedExecutor,
 } from "./src/effects";
-export type { EffectReceipt, EffectRequest, Executor } from "./src/effects";
+export type {
+  EffectReceipt,
+  EffectRequest,
+  Executor,
+  ExecutorMetadata,
+  ExecutorResult,
+} from "./src/effects";
+
+export { VERCEL_AI_GATEWAY_BASE_URL, vercelGatewayExecutor } from "./src/gateway";
+export type { GatewayExecutorOptions, GatewayFetch } from "./src/gateway";
+
+export {
+  emptyToolRegistry,
+  parseToolSignature,
+  TOOL_SIGNATURE_BOUNDS,
+} from "./src/tools";
+export type {
+  Tool,
+  ToolContext,
+  ToolEffect,
+  ToolRegistry,
+  ToolSignature,
+} from "./src/tools";
 
 export { builtinRegistry } from "./src/registry";
 export type { Fn, FnRegistry, FnSignature } from "./src/registry";
@@ -67,6 +89,48 @@ export type { Transport } from "./src/transport";
 
 export { verifyReceipt } from "./src/verify";
 export type { VerifyReport } from "./src/verify";
+
+export {
+  FOUNDRY_BOUNDS,
+  FOUNDRY_CONTRACT,
+  generateFoundryCandidates,
+  runFoundry,
+  selectFoundryCandidate,
+} from "./src/foundry";
+export type {
+  FoundryCandidateResult,
+  FoundryCase,
+  FoundryCaseResult,
+  FoundryLineage,
+  FoundryOptions,
+  FoundryReport,
+  GenerateCandidatesOptions,
+  GeneratedCandidates,
+} from "./src/foundry";
+export { parseFoundryReport, verifyFoundryReport } from "./src/foundry-verify";
+export type { FoundryVerifyReport } from "./src/foundry-verify";
+
+export { SEARCH_BOUNDS, SEARCH_CONTRACT, runFoundrySearch } from "./src/search";
+export type {
+  SearchGeneration,
+  SearchOptions,
+  SearchReport,
+} from "./src/search";
+export { parseSearchReport, verifySearchReport } from "./src/search-verify";
+export type { SearchVerifyReport } from "./src/search-verify";
+
+export { BENCH_BOUNDS, BENCH_CONTRACT, benchPareto, runBenchmark } from "./src/bench";
+export type {
+  BenchAttribution,
+  BenchCase,
+  BenchCaseResult,
+  BenchOptions,
+  BenchReport,
+  BenchSystem,
+  BenchSystemResult,
+} from "./src/bench";
+export { parseBenchReport, verifyBenchReport } from "./src/bench-verify";
+export type { BenchVerifyReport } from "./src/bench-verify";
 
 export { digestCanonical, digestText } from "./src/digest";
 export type { Digest } from "./src/digest";

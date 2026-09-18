@@ -11,3 +11,54 @@
 - [Organism contract (spec/v1/organism.md)](https://github.com/hraness/morphogen/blob/main/spec/v1/organism.md)
 - [Design notes](https://github.com/hraness/morphogen/tree/main/docs)
 - [Bundled example organisms](https://github.com/hraness/morphogen/tree/main/examples)
+
+## Where it wins
+
+Morphogen wins when a workflow has structure that a single LLM call cannot
+capture: tool-grounded evidence, many narrow classifiers, guarded routing,
+budgets, and the need to prove what happened. Example: a billing-dispute
+organism that first looks up a charge ledger with a typed `tool` cell, then
+classifies. In a live Vercel AI Gateway run, a Qwen 3.5 Flash organism with the
+ledger lookup scored 6/6 for $0.00131, while a Claude Opus 5 call without the
+tool scored 4/6 for $0.02625. Prices were taken from aicharts.io / AI//COST
+and OpenRouter/Alibaba rate cards.
+
+## Why it is a new primitive
+
+Morphogen sits between deterministic programs and open-ended agents. A manifest
+is a finite, strongly-typed graph; a run is a content-addressed, replayable
+receipt; and model judgment is isolated behind bounded cells with declared
+contracts. This makes an organism a new kind of value: hashable, transportable,
+verifiable, and evolvable. See `docs/why-unique.md` in the repository for the
+full comparison.
+
+## Habitats and self-evolution
+
+Because a manifest is a value, an organism can generate and propose new
+organisms, functions, and tools. A shared `Store` and registries become a
+habitat: a population that evolves through foundry search and host admission.
+The organism cannot rewrite its own runtime; it can only propose. The host
+remains the admission gate. A live steel thread already works:
+`bun examples/habitat/promote.ts --live` lets a parent organism call a model to
+design a child, spawn it, and the host promotes the child to a bundle if it is
+valid and different from the safe fallback.
+
+## Quick start
+
+```sh
+bun install
+bun run cli suite
+bun run cli bench examples/bench.config.json --dir .morphogen --out bench-report.json
+```
+
+## Integration
+
+- `Executor` is one method: `execute(effect, signal?)` → raw output. Wrap any
+  provider, local model, or scripted fixture.
+- `ToolRegistry` is a host-supplied `Map` of typed signatures and async callables.
+- CLI: `--gateway-model <provider/model>` for Vercel AI Gateway;
+  `--tools <file>` for `scripted:<data>` or `cmd:<shell>` tool executors;
+  add `prices` to a bench config to get a dollar-denominated Pareto.
+- Agent tools: `morphogen pack` a manifest closure, `morphogen tool-def` to
+  emit an OpenAI/Anthropic function definition, and `morphogen call` to run it
+  and get `{ ok, outputs, receiptDigest, manifestDigest }`.
