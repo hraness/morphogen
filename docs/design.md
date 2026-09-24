@@ -106,8 +106,8 @@ receipts, the `getValue`/`putValue` CAS behind `ref` ports, the
 `getSlot`/`setSlot` mutable cells behind `slot` cells; an Oh-backed
 adapter lands when Oh's API settles (it is moving weekly). `Executor` is one
 async call; provider auth lives behind `--executor-cmd` or a host adapter.
-Morphogen never brokers model access. (From Oompa: custody and provider
-execution are different jobs.)
+Morphogen never brokers model access. Custody and provider
+execution are different jobs.
 
 **State is a cell.** A `slot` cell reads or writes a named, mutable,
 durable key in the store — memory across runs. This is the one place the
