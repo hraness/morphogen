@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "target": "ES2022",
@@ -13,8 +15,18 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["bun"]
+    "types": [
+      "bun"
+    ]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "site/dist", "dist", ".morphogen"]
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "site/dist",
+    "dist",
+    ".morphogen",
+    "site/appearance.ts"
+  ]
 }

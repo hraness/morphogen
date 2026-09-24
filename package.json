@@ -27,7 +27,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p site/tsconfig.json",
     "lint": "eslint .",
     "test": "bun test",
     "check": "bun run typecheck && bun run lint && bun run test && bun run build:site",
@@ -44,7 +44,11 @@
     "react": "19.2.3",
     "satori": "0.33.4",
     "typescript": "^5.6.0",
-    "typescript-eslint": "^8.8.0"
+    "typescript-eslint": "^8.8.0",
+    "@hraness/design-kit": "github:hraness/design-kit#v0.16.2",
+    "@hraness/site-footer": "github:hraness/site-footer#3f29aaa1116205b86a0a65d779120532aeb2cc5d",
+    "@hraness/ui": "github:hraness/ui#v0.5.18",
+    "react-dom": "19.2.3"
   },
   "publishConfig": {
     "access": "public"
