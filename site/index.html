@@ -1,8 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-hraness-theme="paper" data-palette="tokyo-night" data-hraness-material="lantern" data-hraness-pattern="mesh" data-hraness-marketing-preset="editorial">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#e1e2e7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1b26">
 <title>morphogen — typed, replayable workflow organisms</title>
 <meta name="description" content="Morphogen expresses an agentic workflow as a typed graph: deterministic cells, bounded agent cells, classifier routing, and receipts a verifier can replay.">
 <link rel="canonical" href="https://morphogen.dev/">
@@ -48,26 +50,53 @@
   ]
 }
 </script>
+<script src="/appearance.js"></script>
+<link rel="stylesheet" href="/design/fonts.css">
+<link rel="stylesheet" href="/design/paper-theme.css">
+<link rel="stylesheet" href="/design/palette-bridge.css">
+<link rel="stylesheet" href="/design/product-marketing.css">
+<link rel="stylesheet" href="/design/product-marketing-preset.css">
+<link rel="stylesheet" href="/design/lantern-material.css">
+<link rel="stylesheet" href="/design/appearance-menu.css">
+<link rel="stylesheet" href="/footer.css">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-<header>
+<body class="hraness-marketing-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
   <div class="wordmark">morphogen</div>
-  <nav>
+  <nav class="site-nav" aria-label="Primary navigation">
     <a href="https://github.com/hraness/morphogen">github</a>
     <a href="https://github.com/hraness/morphogen/tree/main/docs">docs</a>
+    <div class="hraness-design-theme-toggle" data-hraness-appearance-menu data-presentation="menu" data-ready="false" aria-busy="true">
+      <button class="hraness-design-theme-toggle__trigger" type="button" aria-label="Appearance: System" aria-haspopup="menu" aria-expanded="false" aria-controls="appearance-menu" disabled><span data-current-appearance-icon="system" aria-hidden="true">◐</span></button>
+      <div class="hraness-design-theme-toggle__popover" hidden><div class="hraness-design-theme-toggle__menu" id="appearance-menu" role="menu" aria-label="Appearance">
+        <button class="hraness-design-theme-toggle__item" type="button" role="menuitemradio" aria-checked="false" data-theme-value="light"><span data-appearance-icon="light" aria-hidden="true"></span><span>Light</span></button>
+        <button class="hraness-design-theme-toggle__item" type="button" role="menuitemradio" aria-checked="false" data-theme-value="dark"><span data-appearance-icon="dark" aria-hidden="true"></span><span>Dark</span></button>
+        <button class="hraness-design-theme-toggle__item" type="button" role="menuitemradio" aria-checked="true" data-theme-value="system"><span data-appearance-icon="system" aria-hidden="true"></span><span>System</span></button>
+      </div></div>
+    </div>
   </nav>
 </header>
 
-<main>
-  <section class="hero">
-    <h1>Structure that does the deciding.</h1>
+<main id="main" tabindex="-1">
+  <section class="hero hraness-material-wall" data-hraness-hero aria-labelledby="hero-title">
+    <div class="hero-copy">
+    <h1 id="hero-title">Structure that does the deciding.</h1>
     <p class="lede">
       Morphogen expresses an agentic workflow as a <em>typed graph</em> — an
       organism. Most cells are deterministic code. A few are bounded agent
       cells with a declared context view, a typed output contract, and a
       budget. The graph, not the prompt, carries the decisions.
     </p>
+    <div class="hero-actions"><a class="hraness-marketing-action" data-emphasis="primary" href="https://github.com/hraness/morphogen">Explore the source</a><a href="https://github.com/hraness/morphogen/tree/main/docs">Read the docs →</a></div>
+    </div>
+    <div class="organism-field" aria-hidden="true" inert>
+      <svg viewBox="0 0 360 320" fill="none"><path d="M70 75C170 75 130 160 180 160S260 240 290 240"/><path d="M180 160C180 220 95 240 95 270"/></svg>
+      <div class="organism-cell organism-input" data-hraness-hero-item><span>input</span><strong>typed value</strong><code>text → route</code></div>
+      <div class="organism-cell organism-decide" data-hraness-hero-item><span>classifier</span><strong>one decision</strong><code>choice&lt;label&gt;</code></div>
+      <div class="organism-cell organism-receipt" data-hraness-hero-item><span>receipt</span><strong>replay the run</strong><code>sha256:…</code></div>
+    </div>
   </section>
 
   <section>
@@ -202,8 +231,6 @@ $ morphogen call ./tools/&lt;bundle&gt;.bundle.json --args ticket.args.json
   </section>
 </main>
 
-<footer>
-  <span>morphogen · a <a href="https://github.com/hraness">hraness</a> project</span>
-</footer>
+<!-- hraness-site-footer -->
 </body>
 </html>
