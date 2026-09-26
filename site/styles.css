@@ -125,3 +125,7 @@ h1, h2 { font-family: var(--font-text); text-wrap: balance; }
 @media (pointer: coarse) { .site-nav a, .hero-actions a { min-height: 3rem; display: inline-flex; align-items: center; } }
 @media (prefers-reduced-motion: reduce) { .organism-cell { transform: none; } }
 @media (forced-colors: active) { .organism-cell, .code { border: 1px solid CanvasText; box-shadow: none; } }
+
+/* The shared status page (404.html) styles its own headings, text, and links in
+   design-kit layers; keep this sheet's element rules from reaching into it. */
+.hraness-status-page :is(h1, h2, p, a, ul, li) { all: revert-layer; }

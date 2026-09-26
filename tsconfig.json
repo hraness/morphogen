@@ -27,6 +27,7 @@
     "site/dist",
     "dist",
     ".morphogen",
-    "site/appearance.ts"
+    "site/appearance.ts",
+    "site/status.ts"
   ]
 }
