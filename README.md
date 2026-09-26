@@ -1,5 +1,7 @@
 # morphogen
 
+> Morphogen is the earlier prototype of [ALGAL](https://algal.computer). New work should use ALGAL. This repository stays available for existing workflows and run records.
+
 Typed, replayable workflow organisms for AI agents. A workflow is a finite, typed graph where
 the structure carries the decisions: deterministic cells do most of the work,
 and bounded agent cells handle the parts that need judgment. Every run emits a

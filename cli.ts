@@ -16,6 +16,20 @@ import {
   type Executor,
 } from "./src/effects";
 import { errorReport, MorphogenError } from "./src/errors";
+import {
+  advancedHelp,
+  bareScreen,
+  COMMAND_NAMES,
+  commandHelp,
+  rootHelp,
+} from "./src/cli-help";
+import {
+  closestMatch,
+  detectAudience,
+  exitQuietlyOnClosedPipe,
+  formatError,
+} from "./src/cli-style";
+import packageJson from "./package.json" with { type: "json" };
 import { vercelGatewayExecutor } from "./src/gateway";
 import { builtinRegistry } from "./src/registry";
 import { parseRunReceipt, runOrganism, type RunReceipt } from "./src/run";
@@ -54,94 +68,6 @@ import {
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const EXAMPLES_DIR = join(ROOT, "examples");
 
-const USAGE = `morphogen — typed, replayable workflow organisms
-
-usage:
-  morphogen examples                          list bundled examples
-  morphogen example <id>                      print the example manifest
-  morphogen run <manifest.json> [options]     run an organism, print its receipt
-      --args <file>                           input-cell values (JSON)
-      --responses <file>                      scripted agent outputs (JSON map)
-      --executor-cmd <shell command>          live executor: request on stdin, output on stdout
-      --gateway-model <provider/model>        Vercel AI Gateway structured-output executor
-      --executors <file>                      JSON map of executor name → shell command;
-                                              route.provider/route.preset pick by name
-      --modules <dir>                         load *.morphogen.json into the store for organism cells
-      --transports <file>                     JSON map of transport name → bundle directory;
-                                              via cells resolve remote manifests through it
-      --tools <file>                          tool registry: name → {signature, exec};
-                                              exec is scripted:<file> or cmd:<shell>
-      --dir <path>                            store directory (default .morphogen)
-      --write                                 persist manifest + receipt under --dir
-      --cache-effects                         memoize effects: identical request digests
-                                              serve the store's recorded response
-  morphogen check <manifest.json> [--modules <dir>] [--transports <file>] [--dir <path>]
-                                              admit a manifest without running it
-  morphogen explain <manifest.json> [--modules <dir>] [--transports <file>] [--dir <path>]
-                                              print the compiled signature: resolved ports, guards
-  morphogen verify <receipt.json> [manifest.json] [--modules <dir>] [--transports <file>] [--dir <path>]
-                                              re-run with recorded receipts and compare;
-                                              manifest resolves from the store when omitted
-  morphogen inspect <receipt.json>            summarize a run receipt
-  morphogen runs [--dir <path>]               list receipts stored under --dir
-  morphogen diff <receipt-a.json> <receipt-b.json>
-                                              compare two receipts, report divergence
-  morphogen foundry <config.json> [--responses <file>] [--executor-cmd <command>]
-      [--gateway-model <provider/model>]
-      [--executors <file>] [--modules <dir>] [--transports <file>] [--tools <file>]
-      [--cache-effects] [--dir <path>] [--out <report.json>]
-                                              generate/evaluate candidates and promote a winner
-  morphogen foundry verify <report.json> [--dir <path>]
-                                              replay every run in a foundry report offline
-  morphogen foundry inspect <report.json>     summarize scores, lineage, and promotion
-  morphogen foundry pack <report.json> --out <dir> [--dir <path>]
-                                              export the promoted organism's verified bundle
-  morphogen foundry search <config.json> [executor/store options] [--out <report.json>]
-                                              evolve candidates over bounded generations
-  morphogen foundry search-verify <report.json> [--dir <path>]
-  morphogen foundry search-inspect <report.json>
-  morphogen foundry search-pack <report.json> --out <dir> [--dir <path>]
-                                              inspect or export a verified search winner
-  morphogen bench <config.json> [--modules <dir>] [--tools <file>] [--dir <path>] [--out <report.json>]
-                                              measure several systems on one workload:
-                                              quality, tokens, work, per-model attribution,
-                                              and the non-dominated pareto set (with optional prices)
-  morphogen bench verify <report.json> [--dir <path>]
-                                              replay every case receipt in a bench report
-  morphogen bench inspect <report.json>       summarize a pareto comparison
-  morphogen suite                             run and verify all bundled examples
-  morphogen digest <manifest.json>            print the manifest's canonical digest
-  morphogen store put <value.json> [--dir <path>]
-                                              write a JSON value to CAS, print its ref token
-  morphogen store get <sha256:…> [--dir <path>]
-                                              print the payload a ref resolves to
-  morphogen store has <sha256:…> [--dir <path>]
-                                              report whether a ref resolves
-  morphogen slots [--dir <path>]              list durable slot cells' state
-  morphogen manifests [--dir <path>]         list manifests stored under --dir
-  morphogen manifest <sha256:…> [--dir <path>]
-                                              print a stored manifest
-  morphogen slot get <name> [--dir <path>]    print a slot's current value
-  morphogen slot set <name> <value.json> [--dir <path>]
-                                              write a slot directly (seeding)
-  morphogen pack <manifest.json> [--modules <dir>] [--dir <path>] [--out <dir>]
-                                              print a closure bundle: the manifest plus every
-                                              embedded sub-manifest and const-ref payload;
-                                              --out also writes <root-hex>.bundle.json
-  morphogen unpack <bundle.json> [--dir <path>]
-                                              install a bundle into the store, digests verified
-  morphogen call <bundle.json> [options]
-                                              run a packed organism and print a compact result:
-                                              { ok, outputs, receiptDigest, manifestDigest }.
-                                              options mirror morphogen run: --args, --responses,
-                                              --executor-cmd, --gateway-model, --executors,
-                                              --modules, --tools, --cache-effects, --dir
-  morphogen tool-def <manifest.json> [--modules <dir>]
-                                              print an OpenAI/Anthropic tool definition for the
-                                              organism's interface: a name, description, and a
-                                              JSON Schema of the arguments it expects
-  morphogen --version | --help
-`;
 
 type ParsedArgs = {
   cmd: string;
@@ -175,9 +101,10 @@ async function readJson(path: string): Promise<JsonValue> {
   try {
     return JSON.parse(await readFile(path, "utf8")) as JsonValue;
   } catch (e) {
+    const missing = (e as NodeJS.ErrnoException | undefined)?.code === "ENOENT";
     throw new MorphogenError(
       "PARSE_FAILED",
-      `${path}: ${e instanceof Error ? e.message : String(e)}`,
+      missing ? `No file at ${path}` : `${path}: ${e instanceof Error ? e.message : String(e)}`,
     );
   }
 }
@@ -418,21 +345,28 @@ function deriveInputs(c: {
 }
 
 async function main(): Promise<number> {
-  const { cmd, positional, flags } = parseArgs(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  if (argv.length === 0) {
+    process.stdout.write(bareScreen(VERSION, process.stdout));
+    return 0;
+  }
+  const help = helpFor(argv);
+  if (help !== undefined) {
+    process.stdout.write(help);
+    return 0;
+  }
+  const { cmd, positional, flags } = parseArgs(argv);
   const dir = String(flags.dir ?? ".morphogen");
   const store = new FileStore(dir);
   const fns = builtinRegistry();
 
   switch (cmd) {
-    case "--help":
-    case "-h":
-    case "help":
-      process.stdout.write(USAGE);
-      return 0;
-
     case "--version":
+    case "-V":
+    case "-v":
     case "version":
-      out({ name: "morphogen", version: "0.1.0", contract: "morphogen.organism.v1" });
+      if (flags.json === true) out({ name: "morphogen", version: VERSION, contract: "morphogen.organism.v1" });
+      else process.stdout.write(`morphogen ${VERSION}\n`);
       return 0;
 
     case "examples": {
@@ -1683,10 +1617,47 @@ async function main(): Promise<number> {
       return allOk ? 0 : 1;
     }
 
-    default:
-      process.stderr.write(USAGE);
-      return 2;
+    default: {
+      const guess = closestMatch(cmd, COMMAND_NAMES);
+      throw new MorphogenError(
+        "PARSE_FAILED",
+        `Unknown command "${cmd}".${guess === undefined ? "" : ` Did you mean "${guess}"?`}`,
+      );
+    }
   }
+}
+
+const VERSION: string = packageJson.version;
+
+/** Help for `--help`, `-h`, `help [topic]` and `<command> --help`, or undefined. */
+function helpFor(argv: readonly string[]): string | undefined {
+  const [first, ...rest] = argv;
+  if (first === "--help" || first === "-h" || first === "help") {
+    const topic = rest[0];
+    if (topic === undefined) return rootHelp(process.stdout);
+    if (topic === "advanced") return advancedHelp();
+    const text = commandHelp(topic);
+    if (text === undefined) {
+      const guess = closestMatch(topic, COMMAND_NAMES);
+      throw new MorphogenError(
+        "PARSE_FAILED",
+        `No help for "${topic}".${guess === undefined ? "" : ` Did you mean "${guess}"?`}`,
+      );
+    }
+    return text;
+  }
+  if (first !== undefined && (rest.includes("--help") || rest.includes("-h"))) {
+    return commandHelp(first);
+  }
+  return undefined;
+}
+
+/** The command to suggest after an error in `command`. */
+function nextFor(command: string | undefined, code: string): string {
+  if (command !== undefined && code === "PARSE_FAILED" && commandHelp(command) !== undefined) {
+    return `morphogen ${command} --help`;
+  }
+  return "morphogen --help";
 }
 
 function asRecord(v: JsonValue, what: string): Record<string, JsonValue> {
@@ -1727,12 +1698,29 @@ function usageError(msg: string): never {
   throw new MorphogenError("PARSE_FAILED", `usage: ${msg}`);
 }
 
+/** Sentence form for a person: `usage: x` becomes `Usage: x.` */
+function sentence(message: string): string {
+  const text = message.startsWith("usage: ") ? `Usage: ${message.slice(7)}` : message;
+  const capital = text.charAt(0).toUpperCase() + text.slice(1);
+  return /[.!?"]$/.test(capital) || capital.startsWith("Usage: ") ? capital : `${capital}.`;
+}
+
+exitQuietlyOnClosedPipe();
 main()
   .then((code) => process.exit(code))
   .catch((e) => {
     const rep = errorReport(e);
-    process.stderr.write(
-      canonicalize({ error: rep.code, message: rep.message }) + "\n",
-    );
-    process.exit(rep.code === "PARSE_FAILED" ? 2 : 1);
+    const argv = process.argv.slice(2);
+    const next = nextFor(argv[0], rep.code);
+    const exit = rep.code === "PARSE_FAILED" ? 2 : 1;
+    if (argv.includes("--json") || detectAudience() === "agent") {
+      process.stdout.write(
+        canonicalize({ ok: false, error: { code: rep.code, message: rep.message, next } }) + "\n",
+      );
+    } else {
+      const debug = argv.includes("--debug") || process.env.HRANESS_DEBUG === "1";
+      process.stderr.write(formatError(sentence(rep.message), next));
+      if (debug) process.stderr.write(`  code: ${rep.code}\n`);
+    }
+    process.exit(exit);
   });
