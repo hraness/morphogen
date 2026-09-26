@@ -67,7 +67,7 @@ const runRes = await runCmd(runCmdArgs);
 
 if (runRes.exitCode !== 0) {
   console.error("habitat run failed");
-  console.error(runRes.stderr);
+  console.error(runRes.stderr || runRes.stdout);
   process.exit(1);
 }
 
@@ -90,7 +90,7 @@ const manifestRes = await runCmd([
 ]);
 if (manifestRes.exitCode !== 0) {
   console.error("could not retrieve child manifest");
-  console.error(manifestRes.stderr);
+  console.error(manifestRes.stderr || manifestRes.stdout);
   process.exit(1);
 }
 
@@ -112,7 +112,7 @@ const packRes = await runCmd([
 ]);
 if (packRes.exitCode !== 0) {
   console.error("pack child failed");
-  console.error(packRes.stderr);
+  console.error(packRes.stderr || packRes.stdout);
   process.exit(1);
 }
 

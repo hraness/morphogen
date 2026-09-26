@@ -1,6 +1,6 @@
 {
   "name": "@hraness/morphogen",
-  "version": "0.1.0",
+  "version": "0.3.1",
   "description": "Typed, replayable workflow organisms: deterministic structure, bounded agent cells, replayable receipts.",
   "license": "MIT",
   "type": "module",
