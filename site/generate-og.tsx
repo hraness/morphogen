@@ -17,7 +17,7 @@ const mark = (
 
 const card = createSocialImageCard({
   description:
-    "Morphogen expresses an agentic workflow as a typed graph: deterministic cells, bounded agent cells, classifier routing, and receipts a verifier can replay.",
+    "Morphogen is the earlier prototype of ALGAL. It runs an AI agent workflow as a typed graph of code and bounded model calls, and writes a receipt that replays offline.",
   domain: "morphogen.dev",
   eyebrow: "morphogen",
   mark,
@@ -27,7 +27,7 @@ const card = createSocialImageCard({
     foreground: "#1c1a18",
     muted: "#6b675f",
   },
-  title: "morphogen — typed, replayable workflow organisms",
+  title: "Morphogen: typed, replayable workflows for AI agents",
 });
 
 const svg = await satori(card.element, {
