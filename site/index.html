@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#e1e2e7">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1a1b26">
-<title>morphogen — typed, replayable workflow organisms</title>
-<meta name="description" content="Morphogen expresses an agentic workflow as a typed graph: deterministic cells, bounded agent cells, classifier routing, and receipts a verifier can replay.">
+<title>Morphogen: typed, replayable workflows for AI agents</title>
+<meta name="description" content="Morphogen is the earlier prototype of ALGAL. It runs an AI agent workflow as a typed graph of code and bounded model calls, and writes a receipt that replays offline.">
 <link rel="canonical" href="https://morphogen.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="morphogen">
-<meta property="og:title" content="morphogen — typed, replayable workflow organisms">
-<meta property="og:description" content="Morphogen expresses an agentic workflow as a typed graph: deterministic cells, bounded agent cells, classifier routing, and receipts a verifier can replay.">
+<meta property="og:title" content="Morphogen: typed, replayable workflows for AI agents">
+<meta property="og:description" content="Morphogen is the earlier prototype of ALGAL. It runs an AI agent workflow as a typed graph of code and bounded model calls, and writes a receipt that replays offline.">
 <meta property="og:url" content="https://morphogen.dev/">
 <meta property="og:image" content="https://morphogen.dev/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="morphogen — typed, replayable workflow organisms">
+<meta property="og:image:alt" content="Morphogen: typed, replayable workflows for AI agents">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="morphogen — typed, replayable workflow organisms">
-<meta name="twitter:description" content="Morphogen expresses an agentic workflow as a typed graph: deterministic cells, bounded agent cells, classifier routing, and receipts a verifier can replay.">
+<meta name="twitter:title" content="Morphogen: typed, replayable workflows for AI agents">
+<meta name="twitter:description" content="Morphogen is the earlier prototype of ALGAL. It runs an AI agent workflow as a typed graph of code and bounded model calls, and writes a receipt that replays offline.">
 <meta name="twitter:image" content="https://morphogen.dev/og.png">
 <meta name="robots" content="index, follow">
 <script type="application/ld+json">
@@ -35,17 +35,17 @@
       "@type": "SoftwareApplication",
       "name": "morphogen",
       "url": "https://morphogen.dev/",
-      "description": "Morphogen expresses an agentic workflow as a typed graph: deterministic cells, bounded agent cells, classifier routing, and receipts a verifier can replay.",
+      "description": "Morphogen is the earlier prototype of ALGAL. It runs an AI agent workflow as a typed graph of code and bounded model calls, and writes a receipt that replays offline.",
       "applicationCategory": "DeveloperApplication",
       "codeRepository": "https://github.com/hraness/morphogen",
       "license": "https://opensource.org/license/mit",
-      "author": { "@id": "https://github.com/hraness#org" }
+      "author": { "@id": "https://hraness.com/#organization" }
     },
     {
       "@type": "Organization",
-      "@id": "https://github.com/hraness#org",
-      "name": "hraness",
-      "url": "https://github.com/hraness"
+      "@id": "https://hraness.com/#organization",
+      "name": "Hraness",
+      "url": "https://hraness.com/"
     }
   ]
 }
@@ -82,12 +82,14 @@
 <main id="main" tabindex="-1">
   <section class="hero hraness-material-wall" data-hraness-hero aria-labelledby="hero-title">
     <div class="hero-copy">
-    <h1 id="hero-title">Structure that does the deciding.</h1>
+    <p class="successor-note">Morphogen is the earlier prototype of <a href="https://algal.computer">ALGAL</a>. New work should use ALGAL. This repository stays available for existing workflows and run records.</p>
+    <h1 id="hero-title">Typed, replayable workflows for AI agents</h1>
     <p class="lede">
-      Morphogen expresses an agentic workflow as a <em>typed graph</em> — an
-      organism. Most cells are deterministic code. A few are bounded agent
-      cells with a declared context view, a typed output contract, and a
-      budget. The graph, not the prompt, carries the decisions.
+      Morphogen runs an agent workflow as a <em>typed graph</em>. Most cells
+      are deterministic code. A few are bounded agent cells, each with a
+      declared context view, a typed output, and a budget. Routing follows
+      edges declared in the graph, so a model can only pick a declared label
+      or fill a typed output.
     </p>
     <div class="hero-actions"><a class="hraness-marketing-action" data-emphasis="primary" href="https://github.com/hraness/morphogen">Explore the source</a><a href="https://github.com/hraness/morphogen/tree/main/docs">Read the docs →</a></div>
     </div>
@@ -97,18 +99,6 @@
       <div class="organism-cell organism-decide" data-hraness-hero-item><span>classifier</span><strong>one decision</strong><code>choice&lt;label&gt;</code></div>
       <div class="organism-cell organism-receipt" data-hraness-hero-item><span>receipt</span><strong>replay the run</strong><code>sha256:…</code></div>
     </div>
-  </section>
-
-  <section>
-    <h2>A new primitive</h2>
-    <p>
-      Morphogen is not a prompt framework or a DAG engine. It is a
-      <em>bounded, typed, content-addressed probabilistic program</em>: a
-      manifest as a value, a run as a verifiable receipt, and model judgment
-      isolated behind declared cells. That makes an organism a new kind of
-      reusable object: hashable, transportable, evolvable, and safe to execute
-      even when you did not write it.
-    </p>
   </section>
 
   <section>
@@ -159,7 +149,7 @@ $ morphogen verify run.receipt.json triage.morphogen.json
   </section>
 
   <section>
-    <h2>Case study: cheap + tool beats frontier alone</h2>
+    <h2>Case study: a cheap model with a ledger tool</h2>
     <p>
       A billing-dispute organism first retrieves an account's charge ledger
       through a typed <code>tool</code> cell, then decides whether to
@@ -173,9 +163,8 @@ $ morphogen verify run.receipt.json triage.morphogen.json
       <li><strong>Claude Opus 5 without the ledger:</strong> 4/6 correct for $0.02625</li>
     </ul>
     <p>
-      Both models fail the same evidence-only cases when they cannot look up
-      the ledger. The structure — a typed tool call feeding a bounded
-      classifier — is what wins, not the model brand.
+      Without the ledger lookup, both models answered 4 of 6 cases. With it,
+      Qwen 3.5 Flash answered all 6. Results are from a September 2026 run.
     </p>
     <p>
       <a href="https://github.com/hraness/morphogen/tree/main/examples/invest">See the invest example</a>

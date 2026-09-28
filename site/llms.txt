@@ -1,6 +1,7 @@
 # morphogen
 
-> Typed, replayable workflow organisms for AI agents: a finite, typed graph
+> Morphogen is the earlier prototype of ALGAL (https://algal.computer). New
+> work should use ALGAL. Morphogen runs an AI agent workflow as a typed graph
 > where deterministic cells do most of the work and bounded agent cells handle
 > what needs judgment. Every run emits a content-addressed receipt a verifier
 > can replay offline.

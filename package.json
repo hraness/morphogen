@@ -1,7 +1,7 @@
 {
   "name": "@hraness/morphogen",
   "version": "0.3.1",
-  "description": "Typed, replayable workflow organisms: deterministic structure, bounded agent cells, replayable receipts.",
+  "description": "Earlier prototype of ALGAL: typed, replayable workflows for AI agents, with run receipts a verifier replays offline.",
   "license": "MIT",
   "type": "module",
   "private": false,
